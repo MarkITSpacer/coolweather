@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.coolweather.android.MainActivity;
 import com.example.coolweather.android.R;
 import com.example.coolweather.android.WeatherActivity;
 import com.example.coolweather.android.db.City;
@@ -118,19 +119,40 @@ public class ChooseAreaFragment extends Fragment {
                     if (!specialList.contains(selectedProvince.getProvinceName())) {
                         queryCities();
                     } else {
-                        show(selectedProvince.getProvinceCode());
+                        if (getActivity() instanceof MainActivity) {
+                            show(selectedProvince.getProvinceCode());
+                        } else if (getActivity() instanceof WeatherActivity) {
+                            WeatherActivity activity = (WeatherActivity) getActivity();
+                            activity.drawerLayout.closeDrawers();
+                            activity.swipeRefreshLayout.setRefreshing(true);
+                            activity.requestWeather(selectedProvince.getProvinceCode());
+                        }
                     }
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
                     if (!zxsList.contains(selectedProvince.getProvinceName())) {
                         queryCounties();
                     } else {
-                        show(selectedCity.getCityCode());
+                        if (getActivity() instanceof MainActivity) {
+                            show(selectedCity.getCityCode());
+                        } else if (getActivity() instanceof WeatherActivity) {
+                            WeatherActivity activity = (WeatherActivity) getActivity();
+                            activity.drawerLayout.closeDrawers();
+                            activity.swipeRefreshLayout.setRefreshing(true);
+                            activity.requestWeather(selectedCity.getCityCode());
+                        }
                     }
                 } else if (currentLevel == LEVEL_COUNTY) {
                     selectedCounty = countyList.get(position);
                     String weatherId = selectedCounty.getWeatherId();
-                    show(weatherId);
+                    if (getActivity() instanceof MainActivity) {
+                        show(weatherId);
+                    } else if (getActivity() instanceof WeatherActivity) {
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefreshLayout.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
                 }
             }
         });
