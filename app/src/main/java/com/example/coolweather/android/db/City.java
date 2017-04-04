@@ -14,7 +14,7 @@ public class City extends DataSupport {
 
     private String cityName;
 
-    private int cityCode;
+    private String cityCode;
 
     private int provinceId;
 
@@ -34,11 +34,7 @@ public class City extends DataSupport {
         this.cityName = cityName;
     }
 
-    public int getCityCode() {
-        return cityCode;
-    }
-
-    public void setCityCode(int cityCode) {
+    public void setCityCode(String cityCode) {
         this.cityCode = cityCode;
     }
 
