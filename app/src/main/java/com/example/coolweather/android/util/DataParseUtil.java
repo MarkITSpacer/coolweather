@@ -3,10 +3,14 @@ package com.example.coolweather.android.util;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.example.coolweather.android.db.City;
 import com.example.coolweather.android.db.County;
 import com.example.coolweather.android.db.Province;
 import com.example.coolweather.android.gson.JSONCityEntity;
+import com.example.coolweather.android.gson.Weather;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,24 +97,27 @@ public class DataParseUtil {
      */
 
     public static boolean handleCountyResponse(String data, int cityId, String cityName, String provinceName) {
-        if (!zxs.contains(provinceName)) {
-            if (!TextUtils.isEmpty(data)) {
-                List<JSONCityEntity> entityList = JSON.parseArray(data, JSONCityEntity.class);
-                for (JSONCityEntity entity : entityList) {
-                    if (provinceName.equals(entity.getProvinceZh()) && cityName.equals(entity.getLeaderZh()) && !cityName
-                            .equals(entity.getCityZh())) {
-                        County county = new County();
-                        county.setCountyName(entity.getCityZh());
-                        county.setCountyCode(entity.getId());
-                        county.setCityId(cityId);
-                        county.save();
-                    }
+        if (!TextUtils.isEmpty(data)) {
+            List<JSONCityEntity> entityList = JSON.parseArray(data, JSONCityEntity.class);
+            for (JSONCityEntity entity : entityList) {
+                if (provinceName.equals(entity.getProvinceZh()) && cityName.equals(entity.getLeaderZh()) && !cityName
+                        .equals(entity.getCityZh())) {
+                    County county = new County();
+                    county.setCountyName(entity.getCityZh());
+                    county.setCountyCode(entity.getId());
+                    county.setWeatherId(entity.getId());
+                    county.setCityId(cityId);
+                    county.save();
                 }
-                return true;
             }
-            return false;
-        } else {
-            return false;
+            return true;
         }
+        return false;
+    }
+
+    public static Weather handleWeatherResponse(String data) {
+        JSONObject jsonObject = JSON.parseObject(data);
+        JSONArray jsonArray = jsonObject.getJSONArray("HeWeather5");
+        return new Gson().fromJson(jsonArray.getJSONObject(0).toString(), Weather.class);
     }
 }

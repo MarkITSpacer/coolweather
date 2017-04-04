@@ -1,8 +1,11 @@
 package com.example.coolweather.android.util;
 
+import android.text.TextUtils;
+
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 
 /**
  * author:Mark
@@ -25,11 +28,14 @@ public class HttpUtil {
         return client;
     }
 
-    public static void sendOkHttpRequest(String url, Callback callback) {
+    public static void sendOkHttpRequest(String url, RequestBody body, String method, Callback callback) {
         client = newInstance();
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        Request.Builder builder = new Request.Builder();
+        builder.url(url);
+        if (null != body) {
+            builder.method((TextUtils.isEmpty(method) ? "GET" : "POST"), body);
+        }
+        Request request = builder.build();
         client.newCall(request).enqueue(callback);
     }
 }
